@@ -44,6 +44,18 @@ public:
     addShader(const char *vertexShaderSource, const char *fragmentShaderSource,
               const char *geometryShaderSource = nullptr);
 
+    void setMouseLastPosition(float x, float y) noexcept;
+
+    void frameBufferSizeCallbackImpl(GLFWwindow *window, int width, int height);
+
+    void firstEnterMouseCallback(GLFWwindow *window, double xpos, double ypos,
+                                 bool &control_flag);
+    void cameraDirectionLoop(GLFWwindow *window, double xpos, double ypos);
+    void mouseCallbackImpl(GLFWwindow *window, double xpos, double ypos);
+
+    bool wasFreeCamera_ = true;
+    bool isFirstFreeCamera_ = true;
+
 private:
     bool createWindow();
     bool initializeGLAD();
@@ -60,11 +72,16 @@ private:
     void windowRenderLateUpdate();
     void windowRenderImguiUpdate();
 
+    void windowImguiMain();
     void windowImguiGeneralSetting();
+    void windowImguiModelSetting();
+    void windowImguiModelLoader();
 
     void clearColor();
 
     void processInput();
+    void captureMouse();
+    void cameraMovement();
     void shouldExit();
     void shouldShowPolygonMode();
 
@@ -86,8 +103,22 @@ private:
 
     glm::vec4 backgroundColor_;
 
+    bool isFreeCamera_ = false;
     glm::vec3 lookAt_;
-    glm::vec3 cameraPosition_;
+    glm::vec3 cameraPosition_ = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraFront_ = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraUp_ = glm::vec3(0.0f, 1.0f, 0.0f);
+    float cameraSpeedFactor_ = 2.5f;
+
+    float deltaTime_ = 0.0f; // time between current frame and last frame
+    float lastFrame_ = 0.0f;
+
+    static bool mouseCaptured_;
+    float mouse_lastX_ = 400, mouse_lastY_ = 300;
+    float mouse_yaw_ = -90.0f;
+    float mouse_pitch_ = 0.0f;
+    float mouse_fov_ = 45.0f;
+    float sensitivity_ = 1.0f;
 };
 
 #endif // HOMEWORK01_WINDOW_HPP_

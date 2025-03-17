@@ -42,6 +42,28 @@ public:
     glm::mat4 model();
     void setModel(glm::mat4 &model);
 
+    glm::vec3 getPosition();
+
+    glm::quat getRotation();
+
+    glm::vec3 getRotationEuler();
+
+    glm::vec3 getScale();
+
+    void setPosition(glm::vec3 &position);
+
+    void setRotation(const glm::quat &rot);
+    // euler
+    void setRotation(const glm::vec3 &rot);
+
+    void setRotationDeg(const glm::vec3 &rot);
+
+    void setScale(glm::vec3 &scale);
+
+    void translate(const glm::vec3 &offset);
+
+    void rotate(float angleDegrees, const glm::vec3 &axis);
+
 private:
     using VertexArrayObjectType = OpenGL::OpenGLVertexArrayObject;
     using BufferObjectType = OpenGL::OpenGLBufferObject;
@@ -69,6 +91,12 @@ private:
     GLsizei indicesCount_;
 
     glm::mat4 model_;
+
+    glm::vec3 position_ = glm::vec3(0.0f);
+    glm::quat rotation_ = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec3 scale_ = glm::vec3(1.0f);
+
+    void updateModelMatrix();
 };
 
 } // namespace Model

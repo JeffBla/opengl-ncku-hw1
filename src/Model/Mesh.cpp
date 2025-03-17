@@ -18,8 +18,8 @@ Mesh::Mesh(const std::vector<float> &positions,
            const std::vector<IndexType> &indices,
            ShaderProgramType &shaderProgram, TextureType *texture)
     : shaderProgram_{&shaderProgram}, texture_{texture},
-      vertexArrayObject_{nullptr}, vertexBufferObject_{{nullptr, nullptr,
-                                                      nullptr}},
+      vertexArrayObject_{nullptr},
+      vertexBufferObject_{{nullptr, nullptr, nullptr}},
       elementBufferObject_{nullptr},
       indicesCount_{static_cast<GLsizei>(indices.size())}, model_{1}
 {
@@ -76,8 +76,8 @@ void Mesh::create(const std::vector<float> &positions,
                             2 * sizeof(float), 0);
 
     elementBufferObject_->bind();
-    elementBufferObject_->allocateBufferData(indices.data(),
-                                            sizeof(IndexType) * indices.size());
+    elementBufferObject_->allocateBufferData(
+        indices.data(), sizeof(IndexType) * indices.size());
 
     vertexArrayObject_->release();
 }
@@ -114,6 +114,59 @@ void Mesh::tidy() noexcept
         object.reset();
     }
     vertexArrayObject_.reset();
+}
+
+glm::vec3 Mesh::getPosition() { return position_; }
+void Mesh::setPosition(glm::vec3 &position)
+{
+    position_ = position;
+    updateModelMatrix();
+}
+
+glm::quat Mesh::getRotation() { return rotation_; }
+glm::vec3 Mesh::getRotationEuler() { return glm::eulerAngles(rotation_); }
+
+void Mesh::setRotation(const glm::quat &rot)
+{
+    rotation_ = rot;
+    updateModelMatrix();
+}
+
+void Mesh::setRotation(const glm::vec3 &rot)
+{
+    rotation_ = glm::quat(rot);
+    updateModelMatrix();
+}
+
+void Mesh::setRotationDeg(const glm::vec3 &rot)
+{
+    setRotation(glm::radians(rot));
+}
+
+glm::vec3 Mesh::getScale() { return scale_; }
+void Mesh::setScale(glm::vec3 &scale)
+{
+    scale_ = scale;
+    updateModelMatrix();
+}
+
+void Mesh::translate(const glm::vec3 &offset) {}
+
+void Mesh::rotate(float angleDegrees, const glm::vec3 &axis)
+{
+    glm::quat deltaRotation =
+        glm::angleAxis(glm::radians(angleDegrees), glm::normalize(axis));
+    rotation_ = deltaRotation * rotation_;
+    updateModelMatrix();
+}
+
+void Mesh::updateModelMatrix()
+{
+    model_ = glm::mat4(1.0f);
+    model_ = glm::translate(model_, position_);
+    model_ *=
+        glm::mat4_cast(rotation_); // Convert quaternion to rotation matrix
+    model_ = glm::scale(model_, scale_);
 }
 
 } // namespace Model

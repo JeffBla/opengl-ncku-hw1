@@ -85,25 +85,27 @@ void OpenGLTexture::bind()
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glBindTexture(GL_TEXTURE_2D, id_);
 }
 
 void OpenGLTexture::bindBuffer(const std::vector<unsigned char> &buffer) const
 {
-	// Fill in the Blank
-    // (bind)
-	// (parameter setup: filter and warpping method)
-	
-	// (data specify)
+    glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, format_,
+                 GL_UNSIGNED_BYTE, buffer.data());
 
-	// (generate mipmap)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minificationFilter_);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnificationFilter_);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapOption_);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapOption_);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void OpenGLTexture::create()
 {
     PROGRAM_ASSERT(!Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glGenTextures(1, &id_);
 
     if (!Detail::isCreated(id_))
     {
@@ -132,7 +134,7 @@ void OpenGLTexture::release()
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void OpenGLTexture::setMagnificationFilter(Filter filter)
@@ -141,7 +143,10 @@ void OpenGLTexture::setMagnificationFilter(Filter filter)
     magnificationFilter_ = filter;
 
     bind();
-    // Fill in the Blank
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    static_cast<GLenum>(magnificationFilter_));
+
     release();
 }
 
@@ -151,7 +156,10 @@ void OpenGLTexture::setMinificationFilter(Filter filter)
     minificationFilter_ = filter;
 
     bind();
-    // Fill in the Blank
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    static_cast<GLenum>(minificationFilter_));
+
     release();
 }
 
@@ -161,7 +169,12 @@ void OpenGLTexture::setWrapOption(WrapOption option)
     wrapOption_ = option;
 
     bind();
-    // Fill in the Blank
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                    static_cast<GLenum>(option));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+                    static_cast<GLenum>(option));
+
     release();
 }
 
@@ -169,7 +182,8 @@ void OpenGLTexture::tidy()
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glDeleteTextures(1, &id_);
+
     id_ = 0;
 }
 

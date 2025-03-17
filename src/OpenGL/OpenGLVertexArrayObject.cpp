@@ -60,7 +60,7 @@ void OpenGLVertexArrayObject::bind() noexcept
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glBindVertexArray(id_);
 }
 
 GLuint OpenGLVertexArrayObject::id() const noexcept { return id_; }
@@ -69,14 +69,14 @@ void OpenGLVertexArrayObject::release() noexcept
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glBindVertexArray(0);
 }
 
 void OpenGLVertexArrayObject::create()
 {
     PROGRAM_ASSERT(!Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glGenVertexArrays(1, &id_);
 
     if (!Detail::isCreated(id_))
     {
@@ -88,7 +88,8 @@ void OpenGLVertexArrayObject::tidy() noexcept
 {
     PROGRAM_ASSERT(Detail::isCreated(id_));
 
-    // Fill in the Blank
+    glDeleteVertexArrays(1, &id_);
+
     id_ = Detail::noId;
 }
 
